@@ -3,7 +3,8 @@
 {% block title %}Genus {{ name }}{% endblock %}
 
 {% block body %}
-    <h2 class="genus-name">{{ name }}</h2>
+
+    <h2 class="genus-name">{{ name }} </h2>
 
     <div class="sea-creature-container">
         <div class="genus-photo"></div>
@@ -12,9 +13,9 @@
                 <dt>Subfamily:</dt>
                 <dd>Octopodinae</dd>
                 <dt>Known Species:</dt>
-                <dd>289</dd>
+                <dd>{{ '9999999' | number_format }}</dd>
                 <dt>Fun Fact:</dt>
-                <dd>Octopuses can change the color of their body in just three-tenths of a second!</dd>
+                <dd>{{ funFact | raw }}</dd>
             </dl>
         </div>
     </div>
