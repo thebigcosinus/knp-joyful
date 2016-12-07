@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Genus;
 use AppBundle\Entity\GenusNote;
+use AppBundle\Service\MarkdownTransformer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -79,6 +80,11 @@ class GenusController extends Controller
         });*/
         $recentNotes = $em->getRepository('AppBundle:GenusNote')->findAllRecentNotesForGenus($genus);
 
+        //$transformer =  new MarkdownTransformer($this->get('markdown.parser'));
+        $transformer = $this->get('app.markdown_transformer');
+        $funFact =  $transformer->parse($genus->getFunFact());
+
+
 //        $markown = $this->get('markdown.parser');
 //        $funFact = 'une petite phrases en **gras**';
 //        $cache  = $this->get('doctrine_cache.providers.my_markown_cache');
@@ -95,6 +101,7 @@ class GenusController extends Controller
         
         return $this->render('genus/show.html.twig', array(
             'genus' => $genus,
+            'funFact' => $funFact,
             'recentNoteCount' =>count($recentNotes)
         ));
     }
