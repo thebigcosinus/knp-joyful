@@ -4,17 +4,32 @@ security:
 
     # http://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
+        our_user:
+            entity:
+                class: AppBundle\Entity\User
+                property: email
         in_memory:
             memory: ~
+    encoders:
+        AppBundle\entity\User: bcrypt
+    role_hierarchy:
+        ROLE_ADMIN: ['ROLE_MANAGE_GENUS', 'ROLE_ALLOWED_TO_SWITCH']
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
         main:
             anonymous: ~
+            guard:
+                authenticators:
+                    - app.security.login_form_authenticator
+            logout:
+                path: /logout
+                target: /genus
+            switch_user: ~
+
             # activate different ways to authenticate
 
             # http_basic: ~
@@ -22,3 +37,5 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+    access_control:
+        #- { path: admin, roles: ROLE_USER}

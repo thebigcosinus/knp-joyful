@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 class GenusController extends Controller
 {
     /**
-     * @Route("/genus")
+     * @Route("/genus" , name="homepagegenus")
      */
     public function listAction()
     {

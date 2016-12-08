@@ -16,3 +16,12 @@ services:
         #autowire: true
         tags:
             - { name: twig.extension}
+    app.security.login_form_authenticator:
+        class: AppBundle\Security\LoginFormAuthenticator
+        autowire: true
+        #arguments: ['@form.factory', '@doctrine.orm.entity_manager', '@router']
+    app.doctrine.has_password_listener:
+        class: AppBundle\Doctrine\HashPasswordListener
+        arguments: ['@security.password_encoder']
+        tags:
+            - {name: doctrine.event_subscriber}
