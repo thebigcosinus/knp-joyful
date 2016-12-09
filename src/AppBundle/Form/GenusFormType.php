@@ -27,7 +27,9 @@ class GenusFormType extends AbstractType
                     return $repo->createAlphabteticalQueryBuilder();
                 }
             ))
-            ->add('funFact', TextType::class)
+            ->add('funFact', null, [
+                'help' => 'toto'
+            ]})
             ->add('isPublished', ChoiceType::class, array(
                 'choices' => array(
                     'Yes' => true,
@@ -41,6 +43,12 @@ class GenusFormType extends AbstractType
             ))
             ;
     }
+
+    /*public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view['funFact']->vars['help'] =  'For exemple';
+    }*/
+
 
     public function configureOptions(OptionsResolver $resolver)
     {

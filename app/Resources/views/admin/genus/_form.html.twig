@@ -1,11 +1,30 @@
+{#
+{{ form(genusForm) }}
+#}
+
 {{ form_start(genusForm, {'attr':{'novalidate':'novalidate'}}) }}
+
+                    {{ form_errors(genusForm) }}
+{#
+                    {{ form_label(genusForm.name) }}
+                    {{ form_widget(genusForm.name) }}
+                    {{ form_errors(genusForm.name) }}#}
                     {{ form_row(genusForm.name) }}
-                    {{ form_row(genusForm.subFamily) }}
+{#{{ dump(genusForm.subFamily.vars) }}#}
+                    {{ form_row(genusForm.subFamily, {
+                        label: 'Taxonomic Sub Family',
+                        attr: {
+                            class: 'foo'
+                        },
+                        disabled: false
+                    }) }}
                     {{ form_row(genusForm.speciesCount, {
                         'label' : 'Number of species'
                     }) }}
                     {{ form_row(genusForm.funFact) }}
-                    {{ form_row(genusForm.isPublished) }}
+                    {{ form_row(genusForm.isPublished, {
+                        help : 'The help line'
+                    }) }}
                     {{ form_row(genusForm.firstDiscoveredAt) }}
 <button type="submit" class="btn btn-primary">Save</button>
 {{ form_end(genusForm) }}
