@@ -8,7 +8,7 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20161208140154 extends AbstractMigration
+class Version20161209150251 extends AbstractMigration
 {
     /**
      * @param Schema $schema
@@ -18,7 +18,9 @@ class Version20161208140154 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE user ADD roles LONGTEXT NOT NULL COMMENT \'(DC2Type:json_array)\'');
+        $this->addSql('CREATE TABLE genus_user (genus_id INT NOT NULL, user_id INT NOT NULL, INDEX IDX_2656D0B185C4074C (genus_id), INDEX IDX_2656D0B1A76ED395 (user_id), PRIMARY KEY(genus_id, user_id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE genus_user ADD CONSTRAINT FK_2656D0B185C4074C FOREIGN KEY (genus_id) REFERENCES genus (id) ON DELETE CASCADE');
+        $this->addSql('ALTER TABLE genus_user ADD CONSTRAINT FK_2656D0B1A76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
     }
 
     /**
@@ -29,6 +31,6 @@ class Version20161208140154 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE user DROP roles');
+        $this->addSql('DROP TABLE genus_user');
     }
 }

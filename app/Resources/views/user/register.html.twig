@@ -5,11 +5,17 @@
         <div class="row">
             <div class="col-xs-12">
                 <h1>Register!</h1>
-                {{ form_start(form, {'attr':{'novalidate':'novalidate'}}) }}
-                {{ form_row(form.email) }}
-                {{ form_row(form.plainPassword.first, {'label' : 'Password'}) }}
-                {{ form_row(form.plainPassword.second,  {'label' : 'Repeat Password'}) }}
-                <button type="submit" class="btn btn-primary">Register!</button>
+
+                {{ form_start(form) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.plainPassword.first, {
+                        'label': 'Password'
+                    }) }}
+                    {{ form_row(form.plainPassword.second, {
+                        'label': 'Repeat Password'
+                    }) }}
+
+                    <button type="submit" class="btn btn-primary" formnovalidate>Register</button>
                 {{ form_end(form) }}
             </div>
         </div>

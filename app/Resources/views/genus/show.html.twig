@@ -18,6 +18,19 @@
                 <dd>{{ funFact | markdownify}}</dd>
                 <dt>Recent Notes</dt>
                 <dd>{{ recentNoteCount }}</dd>
+                <dt>Lead Scientists</dt>
+                <dd>
+                    <ul class="list-group">
+                        {% for genusScientist in genus.genusScientists %}
+                            <li class="list-group-item">
+                                <a href="{{ path("user_show", {id: genusScientist.id}) }}">{{ genusScientist.email }}</a>
+                                <a href="#" class="btn btn-link btn-xs pull-right js-remove-scientist-user">
+                                    <span class="fa fa-close"></span>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </dd>
             </dl>
         </div>
     </div>
@@ -32,11 +45,19 @@
 
     <script type="text/babel" src="{{ asset('js/notes.react.js') }}"></script>
     <script type="text/babel">
-        var notesUrl = '{{ path('genus_show_notes', {'name': genus.name}) }}';
+        var notesUrl = '{{ path('genus_show_notes', {'slug': genus.slug}) }}';
 
         ReactDOM.render(
           <NoteSection url={notesUrl} />,
           document.getElementById('js-notes-wrapper')
         );
+    </script>
+    <script>
+        jQuery(document).ready(function() {
+            $('.js-remove-scientist-user').on('click', function(e) {
+            e.preventDefault();
+               $.ajax({})
+            });
+        });
     </script>
 {% endblock %}

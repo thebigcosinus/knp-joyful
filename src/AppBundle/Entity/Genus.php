@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\GenusRepository")
  * @ORM\Table(name="genus")
@@ -61,9 +62,24 @@ class Genus
      */
     private $notes;
 
+    /**
+     * @ORM\Column(type="string", unique=true)
+     * @Gedmo\Slug(fields={"name"})
+     */
+    private $slug;
+
+    /**
+     * @var
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="studiedGenuses")
+     * @ORM\JoinTable(name="genus_scientist")
+     */
+    private $genusScientists;
+
+
     public function __construct()
     {
         $this->notes = new ArrayCollection();
+        $this->genusScientists = new ArrayCollection();
     }
 
     public function getName()
@@ -152,6 +168,53 @@ class Genus
     {
         return $this->id;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param mixed $slug
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @param User $user
+     * @return mixed
+     */
+    public function addGenusScientists(User $user)
+    {
+        if ($this->genusScientists->contains($user)) {
+            return;
+        }
+        $this->genusScientists[] = $user;
+    }
+
+    /**
+     * @return ArrayCollection|User[]
+     */
+    public function getGenusScientists()
+    {
+        return $this->genusScientists;
+    }
     
+    public function removeGenusScientist(User $user) {
+        
+        if ($this->genusScientists->contains($user)) {
+            $this->genusScientists->removeElement($user);
+        }
+    }
+
+
+
+
+
 
 }

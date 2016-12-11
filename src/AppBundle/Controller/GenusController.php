@@ -4,9 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Genus;
 use AppBundle\Entity\GenusNote;
-use AppBundle\Service\MarkdownTransformer;
+use AppBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -36,10 +35,13 @@ class GenusController extends Controller
      */
     public function newAtion()
     {
+        $em = $this->getDoctrine()->getManager();
         $genus = new Genus();
         $genus->setName("octopus".mt_rand(1,100));
-        $genus->setSubFamily('Octopidaine');
+        $sub = $em->getRepository('AppBundle:SubFamily')->findOneBy(['name'=>'Adams']);
+        $genus->setSubFamily($sub);
         $genus->setSpeciesCount(mt_rand(100,99999));
+        $genus->setFirstDiscoveredAt(  new \DateTime());
 
         $genusNote = new GenusNote();
         $genusNote->setCreatedAt(new \Datetime());
@@ -53,7 +55,14 @@ class GenusController extends Controller
         $genusNote->setUsername('fabien');
         $genusNote ->setGenus($genus);
 
+        
         $em = $this->getDoctrine()->getManager();
+        
+        $user = $em->getRepository('AppBundle:User')
+            ->findOneBy(['email' => 'weaverryan+10@gmail.com']);
+        
+        $genus->addGenusScientists($user);
+        
         $em->persist($genus);
         $em->persist($genusNote);
         $em->flush();
@@ -62,18 +71,18 @@ class GenusController extends Controller
 
     }
     /**
-     * @Route("/genus/{genusName}", name="genus_show")
+     * @Route("/genus/{slug}", name="genus_show")
      */
-    public function showAction($genusName)
+    public function showAction(Genus $genus)
     {
         $em = $this->getDoctrine()->getManager();
-        $genus = $em->getRepository('AppBundle:Genus')->findOneBy(['name' => $genusName]);
+        //$genus = $em->getRepository('AppBundle:Genus')->findOneBy(['slug' => $genusName]);
 
-        if (!$genus) {
+       /* if (!$genus) {
              throw $this->createNotFoundException('No genus found');
-        }
+        }*/
         $this->get('logger')
-            ->info('Showing genus:'.$genusName);
+            ->info('Showing genus:'.$genus->getName());
 
         /*$recentNotes = $genus->getNotes()->filter(function(GenusNote $note) {
                 return $note->getCreatedAt() > new \DateTime('-3 months');
@@ -107,7 +116,7 @@ class GenusController extends Controller
     }
 
     /**
-     * @Route("/genus/{name}/notes", name="genus_show_notes")
+     * @Route("/genus/{slug}/notes", name="genus_show_notes")
      * @Method("GET")
      */
     public function getNotesAction(Genus $genus)
@@ -128,5 +137,35 @@ class GenusController extends Controller
             'notes' => $notes
         ];
         return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/genus/{genusId}/scientist/{userId}", name="genus_scientist_remove")
+     * @Method("DELETE")
+     */
+    public function removeGenusScientistAction($genusId, $userId)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var Genus $genus */
+        $genus = $em->getRepository('AppBundle:Genus')
+            ->find($genusId);
+
+        if ($genus) {
+            throw $this->createNotFoundException('genus not found');
+        }
+
+        /** @var User $genusScientist */
+        $genusScientist = $em->getRepository('AppBundle:User')
+            ->find($userId);
+
+        if ($genusScientist) {
+            throw $this->createNotFoundException('genusScientist not found');
+        }
+        $genus->removeGenusScientist($genusScientist);
+        $em->persist($genus);
+        $em->flush();
+
+        return new Response(null, 204);
     }
 }
